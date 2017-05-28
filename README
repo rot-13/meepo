@@ -1,0 +1,12 @@
+# Meepo
+
+### Who's in the office webserver.
+
+#### Config
+
+1. Install `arp-scan` (either `sudo apt-get install arp-scan` in UNIX, or `brew install arp-scan` in OSX).
+2. `npm install`.
+
+#### Run
+
+1. `npm start`.
