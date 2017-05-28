@@ -5,11 +5,11 @@
   "repository": "https://github.com/rot-13/meepo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
-  "author": "PayPal CPC",
+  "author": "Shay Davidson, Elad Shaham, Erez Dickman",
   "license": "MIT",
   "dependencies": {
-    "arpscan": "^0.5.0"
+    "arpscan": "git://github.com/ShayDavidson/arpscan#9910bd8dc7f53c44dca389b8d4d9b1a4b1608bcb"
   }
 }
