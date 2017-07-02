@@ -1,8 +1,5 @@
-const arpscanner = require('arpscan')
-const interfaceValue = null
-arpscanner(onResult, { sudo: true, interface: interfaceValue })
+const server = require('./server')
 
-function onResult(err, data) {
-	if (err) throw err
-	console.log(data)
-}
+server.listen(process.env.PORT || 8000, function() {
+  console.log('%s listening at %s', server.name, server.url)
+})
