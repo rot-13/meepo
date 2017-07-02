@@ -31,13 +31,13 @@ server.post('/entries', (req, res, next) => {
 
 server.get('/entries', (req, res, next) => {
   Entry.find({ timestamp: $lastEntriesTimestamp })
-    .then(entries => res.send(entries))
+    .then(entries => res.send({ entries }))
     .catch(err => res.send(500, err.message)).then(next)
 })
 
 server.get('/entries/count', (req, res, next) => {
   Entry.count({ timestamp: $lastEntriesTimestamp })
-    .then(count => res.send(200, count))
+    .then(count => res.send({ count }))
     .catch(err => res.send(500, err.message)).then(next)
 })
 
@@ -47,7 +47,7 @@ server.get('/scan', (req, res, next) => {
     .then(entries => {
       $lastEntriesTimestamp = getTimestampFromEntries(entries)
       createEntries(entries)
-      res.send(entries)
+      res.send({ entries })
     })
     .catch(err => res.send(500, err.message)).then(next)
 })
