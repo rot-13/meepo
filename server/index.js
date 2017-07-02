@@ -130,6 +130,7 @@ function handleError(res) {
 function trackEntriesDelta(oldEntries, newEntries) {
   const left = _.differenceBy(oldEntries, newEntries, 'mac')
   const joined = _.differenceBy(newEntries, oldEntries, 'mac')
+  console.log(oldEntries, newEntries, left, joined)
   left.forEach(({ mac }) => mixpanel.track('left', { distinct_id: mac }))
   joined.forEach(({ mac }) => mixpanel.track('joined', { distinct_id: mac }))
 }
