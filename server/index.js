@@ -80,7 +80,7 @@ server.get('/summary', (req, res, next) => {
 
 // functions
 function findOrCreatePerson(person) {
-  return Person.findOne({ identifier: person.identifier })
+  return Person.findOne({ identifier: person && person.identifier })
     .then(foundPerson => {
       if (foundPerson) {
         return Object.assign(foundPerson, person).save()
@@ -92,7 +92,7 @@ function findOrCreatePerson(person) {
 
 function findOrCreateDeviceForPerson(device) {
   return person => {
-    return Device.findOne({ mac: device.mac })
+    return Device.findOne({ mac: device && device.mac })
       .then(foundDevice => {
         const deviceData = Object.assign({ person }, device)
         if (foundDevice) {
