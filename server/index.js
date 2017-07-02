@@ -30,9 +30,9 @@ db.connect().then(() => {
 // routes
 server.post('/entries', (req, res, next) => {
   const { entries } = req.body
-  // assuming all entries have the same timestamp
-  $lastEntriesTimestamp = getTimestampFromEntries(entries)
-  createEntries(entries)
+  let timestamp = new Date().getTime()
+  $lastEntriesTimestamp = timestamp = new Date().getTime()
+  createEntriesWithTimestamp(entries, timestamp)
     .then(() => res.send({ entries }))
     .catch(handleError(res)).then(next)
 })
@@ -103,16 +103,12 @@ function getAllDevices() {
   return Device.find({}, { populate: true })
 }
 
-function getTimestampFromEntries(entries) {
-  return entries && entries[0] && entries[0].timestamp
+function createEntry(entry, timestamp) {
+  return Entry.create(Object.assign({ timestamp }, entry)).save()
 }
 
-function createEntry(entry) {
-  return Entry.create(entry).save()
-}
-
-function createEntries(entries) {
-  return Promise.all(entries.map(entry => createEntry(entry)))
+function createEntriesWithTimestamp(entries, timestamp) {
+  return Promise.all(entries.map(entry => createEntry(entry, timestamp)))
 }
 
 function handleError(res) {
