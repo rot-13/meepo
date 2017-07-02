@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const restify = require('restify')
 const db = require('./db')
 
@@ -34,35 +33,51 @@ server.post('/entries', (req, res, next) => {
   $lastEntriesTimestamp = getTimestampFromEntries(entries)
   createEntries(entries)
     .then(() => res.send({ entries }))
-    .catch(err => res.send(500, err.message)).then(next)
+    .catch(handleError(res)).then(next)
 })
 
 server.get('/entries', (req, res, next) => {
   getLatestEntries()
     .then(entries => res.send({ entries }))
-    .catch(err => res.send(500, err.message)).then(next)
+    .catch(handleError(res)).then(next)
 })
 
 server.post('/associate', (req, res, next) => {
   const { person: personData, device: deviceData } = req.body
   findOrCreatePerson(personData).then(findOrCreateDeviceForPerson(deviceData))
-    .catch(err => res.send(500, err.message)).then(next)
+    .then(() => res.send(200))
+    .catch(handleError(res)).then(next)
 })
 
 server.get('/summary', (req, res, next) => {
-  Promise.map([getLatestEntries, getAllDevices])
+  Promise.all([getLatestEntries(), getAllDevices()])
     .then(([entries, devices]) => res.send({ entries, devices }))
-    .catch(err => res.send(500, err.message)).then(next)
+    .catch(handleError(res)).then(next)
 })
 
 // functions
 function findOrCreatePerson(person) {
-  return Person.findOneAndUpdate({ identifier: person.identifier }, person)
+  return Person.findOne({ identifier: person.identifier })
+    .then(foundPerson => {
+      if (foundPerson) {
+        return Object.assign(foundPerson, person).save()
+      } else {
+        return Person.create(person).save()
+      }
+    })
 }
 
 function findOrCreateDeviceForPerson(device) {
-  return (person) => {
-    return Device.findOneAndUpdate({ mac: device.mac }, Object.assign({ person }, device))
+  return person => {
+    return Device.findOne({ mac: device.mac })
+      .then(foundDevice => {
+        const deviceData = Object.assign({ person }, device)
+        if (foundDevice) {
+          return Object.assign(foundDevice, deviceData).save()
+        } else {
+          return Device.create(deviceData).save()
+        }
+      })
   }
 }
 
@@ -84,6 +99,13 @@ function createEntry(entry) {
 
 function createEntries(entries) {
   return Promise.all(entries.map(entry => createEntry(entry)))
+}
+
+function handleError(res) {
+  return (err) => {
+    console.error(err.stack)
+    res.send(500, err.message)
+  }
 }
 
 module.exports = server
