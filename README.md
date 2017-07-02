@@ -1,6 +1,6 @@
-# Meepo
+# meepo-api
 
-### Who's in the office webserver.
+Who's connected to my network API.
 
 #### Setup
 
