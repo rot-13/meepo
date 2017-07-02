@@ -36,6 +36,7 @@ class Device extends Document {
     this.name = String
     this.person = Person
     this.blacklisted = Boolean
+    this.type = String
     this.mac = {
       type: String,
       unique: true
