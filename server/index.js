@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const restify = require('restify')
 const db = require('./db')
 
@@ -46,6 +47,19 @@ server.post('/associate', (req, res, next) => {
   const { person: personData, device: deviceData } = req.body
   findOrCreatePerson(personData).then(findOrCreateDeviceForPerson(deviceData))
     .then(() => res.send(200))
+    .catch(handleError(res)).then(next)
+})
+
+server.get('/people', (req, res, next) => {
+  Promise.all([getLatestEntries(), getAllDevices()])
+    .then(([entries, devices]) => {
+      const people = entries.reduce((people, entry) => {
+        const matchingDevice = devices.find(device => !device.blacklisted && device.mac === entry.mac)
+        if (matchingDevice) people.push(matchingDevice.person)
+        return people
+      }, [])
+      res.send({ people: _.uniqBy(people, 'identifier') })
+    })
     .catch(handleError(res)).then(next)
 })
 
