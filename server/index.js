@@ -29,6 +29,7 @@ db.connect().then(() => {
 
 // routes
 server.post('/entries', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'x')
   const { entries } = req.body
   let timestamp = new Date().getTime()
   $lastEntriesTimestamp = timestamp = new Date().getTime()
@@ -38,12 +39,14 @@ server.post('/entries', (req, res, next) => {
 })
 
 server.get('/entries', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'x')
   getLatestEntries()
     .then(entries => res.send({ entries }))
     .catch(handleError(res)).then(next)
 })
 
 server.post('/associate', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'x')
   const { person: personData, device: deviceData } = req.body
   findOrCreatePerson(personData).then(findOrCreateDeviceForPerson(deviceData))
     .then(() => res.send(200))
@@ -51,6 +54,7 @@ server.post('/associate', (req, res, next) => {
 })
 
 server.get('/people', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'x')
   Promise.all([getLatestEntries(), getAllDevices()])
     .then(([entries, devices]) => {
       const people = entries.reduce((people, entry) => {
@@ -64,6 +68,7 @@ server.get('/people', (req, res, next) => {
 })
 
 server.get('/summary', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'x')
   Promise.all([getLatestEntries(), getAllDevices()])
     .then(([entries, devices]) => res.send({ entries, devices }))
     .catch(handleError(res)).then(next)
