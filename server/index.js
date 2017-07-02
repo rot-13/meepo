@@ -103,12 +103,12 @@ function getAllDevices() {
   return Device.find({}, { populate: true })
 }
 
-function createEntry(entry, timestamp) {
-  return Entry.create(Object.assign({ timestamp }, entry)).save()
+function createEntryWithTimestamp(entry, timestamp) {
+  return Entry.create(Object.assign({}, entry, { timestamp })).save()
 }
 
 function createEntriesWithTimestamp(entries, timestamp) {
-  return Promise.all(entries.map(entry => createEntry(entry, timestamp)))
+  return Promise.all(entries.map(entry => createEntryWithTimestamp(entry, timestamp)))
 }
 
 function handleError(res) {
