@@ -4,10 +4,7 @@ class Entry extends Document {
   constructor() {
     super()
     this.ip = String
-    this.mac = {
-      type: String,
-      unique: true
-    }
+    this.mac = String
     this.vendor = String
     this.timestamp = Number
   }

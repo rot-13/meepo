@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const restify = require('restify')
 const scanner = require('./scanner')
 const db = require('./db')
@@ -25,7 +24,7 @@ let $lastEntriesTimestamp = new Date().getTime()
 server.post('/entries', (req, res, next) => {
   // assuming all entries have the same timestamp
   $lastEntriesTimestamp = getTimestampFromEntries(req.body.entries)
-  createEntries(_.uniqBy(req.body.entries, 'mac'))
+  createEntries(req.body.entries)
     .then(() => res.send(200))
     .catch(err => res.send(500, err.message)).then(next)
 })
@@ -38,7 +37,7 @@ server.get('/entries', (req, res, next) => {
 
 server.get('/entries/count', (req, res, next) => {
   Entry.count({ timestamp: $lastEntriesTimestamp })
-    .then(count => res.send(count))
+    .then(count => res.send(200, count))
     .catch(err => res.send(500, err.message)).then(next)
 })
 
@@ -47,7 +46,7 @@ server.get('/scan', (req, res, next) => {
     .scan()
     .then(entries => {
       $lastEntriesTimestamp = getTimestampFromEntries(entries)
-      createEntries(_.uniqBy(entries, 'mac'))
+      createEntries(entries)
       res.send(entries)
     })
     .catch(err => res.send(500, err.message)).then(next)
