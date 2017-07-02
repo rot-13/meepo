@@ -25,10 +25,11 @@ db.connect().then(() => {
 
 // routes
 server.post('/entries', (req, res, next) => {
+  const { entries } = req.body
   // assuming all entries have the same timestamp
-  $lastEntriesTimestamp = getTimestampFromEntries(req.body.entries)
-  createEntries(req.body.entries)
-    .then(() => res.send(200))
+  $lastEntriesTimestamp = getTimestampFromEntries(entries)
+  createEntries(entries)
+    .then(() => res.send({ entries }))
     .catch(err => res.send(500, err.message)).then(next)
 })
 
