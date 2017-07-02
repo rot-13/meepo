@@ -5,14 +5,12 @@
 	"repository": "https://github.com/rot-13/meepo",
 	"main": "index.js",
 	"scripts": {
+		"start": "node .",
 		"lint": "eslint .",
-		"format": "prettier",
 		"precommit": "lint-staged"
 	},
 	"lint-staged": {
-		"*.js": [
-			"eslint"
-		]
+		"*.js": ["eslint"]
 	},
 	"author": "Shay Davidson, Elad Shaham, Erez Dickman",
 	"license": "MIT",
