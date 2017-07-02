@@ -1,13 +1,6 @@
 const restify = require('restify')
-const scanner = require('./scanner')
 const db = require('./db')
 const Entry = require('./schema').Entry
-
-// db
-db.connect().catch(err => {
-  console.error('Error connecting to DB', err)
-  process.exit()
-})
 
 // server
 const { name, version } = require('../package.json')
@@ -19,6 +12,16 @@ server.use(restify.plugins.bodyParser())
 
 // state
 let $lastEntriesTimestamp = new Date().getTime()
+
+// db
+db.connect().then(() => {
+  return Entry.find({}, { limit: 1, sort: '-timestamp' }).then((entries) => {
+    if (entries[0]) $lastEntriesTimestamp = entries[0].timestamp
+  })
+}).catch(err => {
+  console.error('Error connecting to DB', err)
+  process.exit()
+})
 
 // routes
 server.post('/entries', (req, res, next) => {
@@ -32,23 +35,6 @@ server.post('/entries', (req, res, next) => {
 server.get('/entries', (req, res, next) => {
   Entry.find({ timestamp: $lastEntriesTimestamp })
     .then(entries => res.send({ entries }))
-    .catch(err => res.send(500, err.message)).then(next)
-})
-
-server.get('/entries/count', (req, res, next) => {
-  Entry.count({ timestamp: $lastEntriesTimestamp })
-    .then(count => res.send({ count }))
-    .catch(err => res.send(500, err.message)).then(next)
-})
-
-server.get('/scan', (req, res, next) => {
-  scanner
-    .scan()
-    .then(entries => {
-      $lastEntriesTimestamp = getTimestampFromEntries(entries)
-      createEntries(entries)
-      res.send({ entries })
-    })
     .catch(err => res.send(500, err.message)).then(next)
 })
 

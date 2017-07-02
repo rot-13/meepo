@@ -8,6 +8,7 @@
 		"start": "node .",
 		"watch": "nodemon . -d 2",
 		"lint": "eslint .",
+		"deploy": "git push heroku master",
 		"precommit": "lint-staged"
 	},
 	"lint-staged": {
@@ -18,7 +19,6 @@
 	"author": "Shay Davidson, Elad Shaham, Erez Dickman",
 	"license": "MIT",
 	"dependencies": {
-		"arpscan": "git://github.com/ShayDavidson/arpscan#9910bd8dc7f53c44dca389b8d4d9b1a4b1608bcb",
 		"camo": "^0.12.3",
 		"lodash": "^4.17.4",
 		"restify": "^5.0.0"

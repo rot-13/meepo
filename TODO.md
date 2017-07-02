@@ -1,3 +1,0 @@
-- Uptime PagerDuty.
-- Guests.
-- `/count` end point.
