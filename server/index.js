@@ -11,13 +11,8 @@ server.use(restify.plugins.bodyParser())
 server.get('/api/scan', (req, res, next) => {
   scanner
     .scan()
-    .then(data => {
-      res.send(data)
-    })
-    .catch(err => {
-      res.send(500, err.message)
-    })
-    .then(next)
+    .then(data => res.send(data))
+    .catch(err => res.send(500, err.message)).then(next)
 })
 
 module.exports = server

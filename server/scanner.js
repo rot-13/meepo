@@ -1,16 +1,5 @@
-const arpscanner = require('arpscan')
+const arpscanner = require('arpscan/promise')
 
 exports.scan = function() {
-  return new Promise((resolve, reject) => {
-    arpscanner(
-      (err, data) => {
-        if (err) {
-          reject(err)
-        } else {
-          reject(new Error('blabla'))
-        }
-      },
-      { sudo: true, interface: null }
-    )
-  })
+  return arpscanner({ sudo: true, interface: null })
 }
