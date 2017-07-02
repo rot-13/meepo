@@ -1,8 +1,8 @@
 const arpscanner = require('arpscan')
-const interface = null
-arpscanner(onResult, { sudo: true, interface });
+const interfaceValue = null
+arpscanner(onResult, { sudo: true, interface: interfaceValue })
 
 function onResult(err, data) {
-  if (err) throw err;
-  console.log(data);
+	if (err) throw err
+	console.log(data)
 }

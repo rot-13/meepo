@@ -1,15 +1,33 @@
 {
-  "name": "meepo",
-  "version": "1.0.0",
-  "description": "Who's in the office webserver",
-  "repository": "https://github.com/rot-13/meepo",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ."
-  },
-  "author": "Shay Davidson, Elad Shaham, Erez Dickman",
-  "license": "MIT",
-  "dependencies": {
-    "arpscan": "git://github.com/ShayDavidson/arpscan#9910bd8dc7f53c44dca389b8d4d9b1a4b1608bcb"
-  }
+	"name": "meepo",
+	"version": "1.0.0",
+	"description": "Who's in the office webserver",
+	"repository": "https://github.com/rot-13/meepo",
+	"main": "index.js",
+	"scripts": {
+		"lint": "eslint .",
+		"format": "prettier",
+		"precommit": "lint-staged"
+	},
+	"lint-staged": {
+		"*.js": ["prettier", "eslint"],
+		"*.json": ["prettier"]
+	},
+	"author": "Shay Davidson, Elad Shaham, Erez Dickman",
+	"license": "MIT",
+	"dependencies": {
+		"arpscan": "git://github.com/ShayDavidson/arpscan#9910bd8dc7f53c44dca389b8d4d9b1a4b1608bcb"
+	},
+	"devDependencies": {
+		"eslint": "^4.1.1",
+		"eslint-config-prettier": "^2.3.0",
+		"eslint-config-standard": "^10.2.1",
+		"eslint-plugin-import": "^2.6.1",
+		"eslint-plugin-node": "^5.1.0",
+		"eslint-plugin-promise": "^3.5.0",
+		"eslint-plugin-standard": "^3.0.1",
+		"husky": "^0.14.2",
+		"lint-staged": "^4.0.0",
+		"prettier": "^1.5.2"
+	}
 }
