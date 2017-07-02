@@ -1,6 +1,10 @@
+const Promise = require('bluebird')
 const restify = require('restify')
 const db = require('./db')
+
 const Entry = require('./schema').Entry
+const Person = require('./schema').Person
+const Device = require('./schema').Device
 
 // server
 const { name, version } = require('../package.json')
@@ -34,12 +38,42 @@ server.post('/entries', (req, res, next) => {
 })
 
 server.get('/entries', (req, res, next) => {
-  Entry.find({ timestamp: $lastEntriesTimestamp })
+  getLatestEntries()
     .then(entries => res.send({ entries }))
     .catch(err => res.send(500, err.message)).then(next)
 })
 
+server.post('/associate', (req, res, next) => {
+  const { person: personData, device: deviceData } = req.body
+  findOrCreatePerson(personData).then(findOrCreateDeviceForPerson(deviceData))
+    .catch(err => res.send(500, err.message)).then(next)
+})
+
+server.get('/summary', (req, res, next) => {
+  Promise.map([getLatestEntries, getAllDevices])
+    .then(([entries, devices]) => res.send({ entries, devices }))
+    .catch(err => res.send(500, err.message)).then(next)
+})
+
 // functions
+function findOrCreatePerson(person) {
+  return Person.findOneAndUpdate({ identifier: person.identifier }, person)
+}
+
+function findOrCreateDeviceForPerson(device) {
+  return (person) => {
+    return Device.findOneAndUpdate({ mac: device.mac }, Object.assign({ person }, device))
+  }
+}
+
+function getLatestEntries() {
+  return Entry.find({ timestamp: $lastEntriesTimestamp })
+}
+
+function getAllDevices() {
+  return Device.find({}, { populate: true })
+}
+
 function getTimestampFromEntries(entries) {
   return entries && entries[0] && entries[0].timestamp
 }

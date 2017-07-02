@@ -19,6 +19,7 @@
 	"author": "Shay Davidson, Elad Shaham, Erez Dickman",
 	"license": "MIT",
 	"dependencies": {
+		"bluebird": "^3.5.0",
 		"camo": "^0.12.3",
 		"lodash": "^4.17.4",
 		"process-nextick-args": "^1.0.7",

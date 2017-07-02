@@ -17,6 +17,10 @@ class Entry extends Document {
 class Person extends Document {
   constructor() {
     super()
+    this.identifier = {
+      type: String,
+      unique: true
+    }
     this.name = String
     this.imageUrl = String
   }
