@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const restify = require('restify')
+const Mixpanel = require('mixpanel')
 const db = require('./db')
 
 const Entry = require('./schema').Entry
@@ -7,6 +8,7 @@ const Person = require('./schema').Person
 const Device = require('./schema').Device
 
 // server
+const mixpanel = Mixpanel.init('8ad6e22835608487d61063417ab53360')
 const { name, version } = require('../package.json')
 const server = restify.createServer({ name, version })
 
@@ -30,12 +32,14 @@ db.connect().then(() => {
 // routes
 server.post('/entries', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  const { entries } = req.body
-  let timestamp = new Date().getTime()
-  $lastEntriesTimestamp = timestamp = new Date().getTime()
-  createEntriesWithTimestamp(entries, timestamp)
-    .then(() => res.send({ entries }))
-    .catch(handleError(res)).then(next)
+  getLatestEntries().then(lastEntries => {
+    const { entries } = req.body
+    trackEntriesDelta(lastEntries, entries)
+    let timestamp = new Date().getTime()
+    $lastEntriesTimestamp = timestamp = new Date().getTime()
+    return createEntriesWithTimestamp(entries, timestamp)
+      .then(() => res.send({ entries }))
+  }).catch(handleError(res)).then(next)
 })
 
 server.get('/entries', (req, res, next) => {
@@ -121,6 +125,13 @@ function handleError(res) {
     console.error(err.stack)
     res.send(500, err.message)
   }
+}
+
+function trackEntriesDelta(oldEntries, newEntries) {
+  const left = _.differenceBy(oldEntries, newEntries, 'mac')
+  const joined = _.differenceBy(newEntries, oldEntries, 'mac')
+  left.forEach(({ mac }) => mixpanel.track('left', { distinct_id: mac }))
+  joined.forEach(({ mac }) => mixpanel.track('joined', { distinct_id: mac }))
 }
 
 module.exports = server
