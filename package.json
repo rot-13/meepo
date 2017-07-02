@@ -21,6 +21,7 @@
 	"dependencies": {
 		"camo": "^0.12.3",
 		"lodash": "^4.17.4",
+		"process-nextick-args": "^1.0.7",
 		"restify": "^5.0.0"
 	},
 	"devDependencies": {
