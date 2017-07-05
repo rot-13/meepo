@@ -53,7 +53,7 @@ server.post('/associate', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   const { person: personData, device: deviceData } = req.body
   findOrCreatePerson(personData).then(findOrCreateDeviceForPerson(deviceData))
-    .then(() => res.send(200))
+    .then(deviceAndPerson => res.send(deviceAndPerson))
     .catch(handleError(res)).then(next)
 })
 
