@@ -59,16 +59,22 @@ server.post('/associate', (req, res, next) => {
 
 server.get('/people', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  Promise.all([getLatestEntries(), getAllDevices()])
-    .then(([entries, devices]) => {
-      const people = entries.reduce((people, entry) => {
-        const matchingDevice = devices.find(device => !device.blacklisted && device.mac === entry.mac)
-        if (matchingDevice) people.push(matchingDevice.person)
-        return people
-      }, [])
-      res.send({ people: _.uniqBy(people, 'identifier') })
-    })
-    .catch(handleError(res)).then(next)
+  if (req.query.all) {
+    Person.find()
+      .then(people => res.send({ people }))
+      .catch(handleError(res)).then(next)
+  } else {
+    Promise.all([getLatestEntries(), getAllDevices()])
+      .then(([entries, devices]) => {
+        const people = entries.reduce((people, entry) => {
+          const matchingDevice = devices.find(device => !device.blacklisted && device.mac === entry.mac)
+          if (matchingDevice) people.push(matchingDevice.person)
+          return people
+        }, [])
+        res.send({ people: _.uniqBy(people, 'identifier') })
+      })
+      .catch(handleError(res)).then(next)
+  }
 })
 
 server.get('/summary', (req, res, next) => {
