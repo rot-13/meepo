@@ -33,7 +33,6 @@ class Person extends Document {
 class Device extends Document {
   constructor() {
     super()
-    this.name = String
     this.person = Person
     this.blacklisted = Boolean
     this.type = String
